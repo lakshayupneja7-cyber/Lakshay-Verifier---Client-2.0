@@ -1,6 +1,6 @@
 plugins {
-    // Legacy Networking API works here
-    id "fabric-loom" version "1.6-SNAPSHOT"
+    // Works on Gradle 9.2.1
+    id "net.fabricmc.fabric-loom-remap" version "1.14.7"
 }
 
 dependencies {
