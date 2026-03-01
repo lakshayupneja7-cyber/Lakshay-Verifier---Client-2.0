@@ -1,0 +1,31 @@
+plugins {
+    id "net.fabricmc.fabric-loom-remap" version "1.14.7"
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${rootProject.ext.mcVersion}"
+    mappings "net.fabricmc:yarn:${rootProject.ext.yarnMappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${rootProject.ext.fabricLoader}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${rootProject.ext.fabricApi}"
+
+    implementation project(":common")
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 21
+}
+
+processResources {
+    filesMatching("fabric.mod.json") {
+        expand("mcVersion": rootProject.ext.mcVersion)
+    }
+}
+
+tasks.named("remapJar") {
+    archiveBaseName.set("verifier-modern")
+    archiveVersion.set(rootProject.ext.mcVersion)
+}
