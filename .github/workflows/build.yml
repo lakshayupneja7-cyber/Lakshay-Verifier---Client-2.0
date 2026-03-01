@@ -57,11 +57,9 @@ jobs:
             api: "0.97.3+1.20.4"
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Java 21
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "21"
@@ -77,8 +75,7 @@ jobs:
             -PfabricLoader=${{ matrix.loader }} \
             -PfabricApi=${{ matrix.api }}
 
-      - name: Upload legacy jar
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: verifier-legacy-${{ matrix.mc }}
           path: legacy/build/libs/*.jar
@@ -114,11 +111,9 @@ jobs:
             api: "0.141.3+1.21.11"
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Java 21
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "21"
@@ -134,8 +129,7 @@ jobs:
             -PfabricLoader=${{ matrix.loader }} \
             -PfabricApi=${{ matrix.api }}
 
-      - name: Upload modern jar
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: verifier-modern-${{ matrix.mc }}
           path: modern/build/libs/*.jar
