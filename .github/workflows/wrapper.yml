@@ -1,38 +1,29 @@
-name: Create Gradle Wrapper
+name: Generate Gradle Wrapper
 
 on:
   workflow_dispatch:
-
-permissions:
-  contents: write
 
 jobs:
   wrapper:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Java 21
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "21"
 
-      # Install Gradle on the runner ONLY (not your PC)
-      - name: Setup Gradle (runner only)
+      - name: Install Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: "8.8"
 
-      # Generate wrapper files in the repo
-      - name: Generate wrapper
+      - name: Generate wrapper files
         run: |
           gradle wrapper --gradle-version 8.8
-          chmod +x gradlew
 
-      # Commit wrapper files back to repo
-      - name: Commit wrapper files
+      - name: Commit wrapper to repo
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
