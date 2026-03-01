@@ -1,0 +1,90 @@
+name: Build Multi-Version Verifier Client
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  legacy:
+    name: Legacy (1.16.5 → 1.20.4)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - mc: "1.16.5" yarn: "1.16.5+build.10" loader: "0.14.25" api: "0.42.0+1.16"
+          - mc: "1.17.1" yarn: "1.17.1+build.63" loader: "0.14.25" api: "0.46.1+1.17"
+          - mc: "1.18.2" yarn: "1.18.2+build.4"  loader: "0.14.25" api: "0.76.0+1.18.2"
+
+          - mc: "1.19"   yarn: "1.19+build.4"     loader: "0.14.6"  api: "0.55.0+1.19"
+          - mc: "1.19.1" yarn: "1.19.1+build.1"   loader: "0.14.9"  api: "0.58.0+1.19.1"
+          - mc: "1.19.2" yarn: "1.19.2+build.28"  loader: "0.14.10" api: "0.67.1+1.19.2"
+          - mc: "1.19.3" yarn: "1.19.3+build.5"   loader: "0.14.12" api: "0.72.0+1.19.3"
+          - mc: "1.19.4" yarn: "1.19.4+build.2"   loader: "0.14.14" api: "0.87.1+1.19.4"
+
+          - mc: "1.20"   yarn: "1.20+build.1"     loader: "0.14.19" api: "0.83.0+1.20"
+          - mc: "1.20.1" yarn: "1.20.1+build.10"  loader: "0.14.21" api: "0.92.7+1.20.1"
+          - mc: "1.20.2" yarn: "1.20.2+build.4"   loader: "0.14.22" api: "0.89.3+1.20.2"
+          - mc: "1.20.4" yarn: "1.20.4+build.3"   loader: "0.15.3"  api: "0.97.3+1.20.4"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: "8.8"
+
+      - name: Build legacy jar
+        run: >
+          gradle :legacy:clean :legacy:remapJar --no-daemon
+          -PmcVersion=${{ matrix.mc }}
+          -PyarnMappings=${{ matrix.yarn }}
+          -PfabricLoader=${{ matrix.loader }}
+          -PfabricApi=${{ matrix.api }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: verifier-legacy-${{ matrix.mc }}
+          path: legacy/build/libs/*.jar
+
+  modern:
+    name: Modern (1.20.6 → 1.21.11)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - mc: "1.20.6"  yarn: "1.20.6+build.1"  loader: "0.15.10" api: "0.100.8+1.20.6"
+          - mc: "1.21.1"  yarn: "1.21.1+build.3"  loader: "0.16.0"  api: "0.116.9+1.21.1"
+          - mc: "1.21.4"  yarn: "1.21.4+build.1"  loader: "0.16.7"  api: "0.112.0+1.21.4"
+          - mc: "1.21.11" yarn: "1.21.11+build.4" loader: "0.18.1"  api: "0.141.3+1.21.11"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: "9.2.1"
+
+      - name: Build modern jar
+        run: >
+          gradle :modern:clean :modern:remapJar --no-daemon
+          -PmcVersion=${{ matrix.mc }}
+          -PyarnMappings=${{ matrix.yarn }}
+          -PfabricLoader=${{ matrix.loader }}
+          -PfabricApi=${{ matrix.api }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: verifier-modern-${{ matrix.mc }}
+          path: modern/build/libs/*.jar
