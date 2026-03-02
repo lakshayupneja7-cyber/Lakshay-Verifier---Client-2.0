@@ -9,8 +9,8 @@ import net.minecraft.util.Identifier;
 
 import java.util.stream.Collectors;
 
-public class VerifierClient implements ClientModInitializer {
-
+public class VerifierClientLegacy implements ClientModInitializer {
+    
     // ✅ Works on old versions (1.16/1.18/1.19/1.20.4)
     private static final Identifier VERIFY_REQUEST  = new Identifier("lakshay:verify_request");
     private static final Identifier VERIFY_RESPONSE = new Identifier("lakshay:verify_response");
